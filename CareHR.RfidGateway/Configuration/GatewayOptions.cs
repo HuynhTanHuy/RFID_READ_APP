@@ -17,6 +17,7 @@ public sealed class GatewayOptions
     public int ReconnectIntervalMs { get; set; } = 3000;
     public int InventoryPollTimeoutMs { get; set; } = 200;
     public int DebounceSeconds { get; set; } = 5;
+    public int PresenceTimeoutSeconds { get; set; } = 30;
     public int ApiRetryCount { get; set; } = 3;
     public int ApiRetryBackoffMs { get; set; } = 1000;
     public bool AutoStartWithWindows { get; set; }

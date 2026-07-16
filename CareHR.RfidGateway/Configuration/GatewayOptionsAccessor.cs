@@ -43,6 +43,7 @@ public sealed class GatewayOptionsAccessor
         ReconnectIntervalMs = source.ReconnectIntervalMs,
         InventoryPollTimeoutMs = source.InventoryPollTimeoutMs,
         DebounceSeconds = source.DebounceSeconds,
+        PresenceTimeoutSeconds = source.PresenceTimeoutSeconds,
         ApiRetryCount = source.ApiRetryCount,
         ApiRetryBackoffMs = source.ApiRetryBackoffMs,
         AutoStartWithWindows = source.AutoStartWithWindows,

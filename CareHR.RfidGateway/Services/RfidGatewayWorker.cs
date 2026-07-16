@@ -20,6 +20,8 @@ public sealed class RfidGatewayWorker(
     private int _pauseCount;
     private readonly object _pauseLock = new();
     private volatile bool _pausedIdle;
+    private DateTimeOffset _lastPresenceCleanup = DateTimeOffset.MinValue;
+    private static readonly TimeSpan PresenceCleanupInterval = TimeSpan.FromSeconds(2);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -69,6 +71,7 @@ public sealed class RfidGatewayWorker(
 
                         if (tag is null)
                         {
+                            TryCleanupExpiredPresence();
                             await Task.Delay(20, stoppingToken).ConfigureAwait(false);
                             continue;
                         }
@@ -80,7 +83,14 @@ public sealed class RfidGatewayWorker(
                             tag.Rssi,
                             tag.Antenna);
 
+                        debouncer.UpdateLastSeen(tag.Epc, options.Current.PresenceTimeoutSeconds);
+
                         if (!debouncer.ShouldAccept(tag.Epc, options.Current.DebounceSeconds))
+                        {
+                            continue;
+                        }
+
+                        if (!debouncer.ShouldSendPresence(tag.Epc, options.Current.PresenceTimeoutSeconds))
                         {
                             continue;
                         }
@@ -97,6 +107,7 @@ public sealed class RfidGatewayWorker(
                 {
                     ConsumeRestart();
                     logger.LogInformation("Restart Reader requested");
+                    debouncer.ClearPresence();
                     SafeDisconnect();
                     state.SetReader(ReaderHealth.Disconnected);
                 }
@@ -274,6 +285,18 @@ public sealed class RfidGatewayWorker(
         {
             logger.LogDebug(ex, "Disconnect ignored");
         }
+    }
+
+    private void TryCleanupExpiredPresence()
+    {
+        var now = DateTimeOffset.UtcNow;
+        if (now - _lastPresenceCleanup < PresenceCleanupInterval)
+        {
+            return;
+        }
+
+        _lastPresenceCleanup = now;
+        debouncer.RemoveExpiredPresence(options.Current.PresenceTimeoutSeconds);
     }
 
     private sealed class PauseHandle(RfidGatewayWorker owner) : IDisposable
