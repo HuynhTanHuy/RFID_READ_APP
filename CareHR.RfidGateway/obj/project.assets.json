@@ -2080,30 +2080,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\YangTV\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\tekme\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\CareHR\\CareHR.RfidGateway\\CareHR.RfidGateway\\CareHR.RfidGateway.csproj",
+      "projectUniqueName": "D:\\CAREHR\\RFID_READ_APP\\CareHR.RfidGateway\\CareHR.RfidGateway.csproj",
       "projectName": "CareHR.RfidGateway",
-      "projectPath": "E:\\CareHR\\CareHR.RfidGateway\\CareHR.RfidGateway\\CareHR.RfidGateway.csproj",
-      "packagesPath": "C:\\Users\\YangTV\\.nuget\\packages\\",
-      "outputPath": "E:\\CareHR\\CareHR.RfidGateway\\CareHR.RfidGateway\\obj\\",
+      "projectPath": "D:\\CAREHR\\RFID_READ_APP\\CareHR.RfidGateway\\CareHR.RfidGateway.csproj",
+      "packagesPath": "C:\\Users\\tekme\\.nuget\\packages\\",
+      "outputPath": "D:\\CAREHR\\RFID_READ_APP\\CareHR.RfidGateway\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\YangTV\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\tekme\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0-windows"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2163,19 +2157,19 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.27, 8.0.27]"
           },
           {
             "name": "Microsoft.NETCore.App.Host.win-x86",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.27, 8.0.27]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.27, 8.0.27]"
           },
           {
             "name": "Microsoft.WindowsDesktop.App.Ref",
-            "version": "[8.0.25, 8.0.25]"
+            "version": "[8.0.27, 8.0.27]"
           }
         ],
         "frameworkReferences": {
@@ -2186,7 +2180,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.204/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
