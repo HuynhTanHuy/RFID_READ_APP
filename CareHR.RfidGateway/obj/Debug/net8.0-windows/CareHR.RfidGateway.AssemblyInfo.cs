@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("UHF RFID Gateway for CareHR")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f28c1064e40e8f1d599264482ee877772ffc31f6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2feda77f454ede74744040ea1f92fbb686fcd4f0")]
 [assembly: System.Reflection.AssemblyProductAttribute("CareHR RFID Gateway")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CareHR.RfidGateway")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
