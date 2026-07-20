@@ -6,6 +6,9 @@ public sealed class GatewayOptions
 
     public string ReaderIp { get; set; } = "192.168.1.200";
     public int ReaderPort { get; set; } = 2022;
+
+    /// <summary>RF output power (dBm, 0–33). Null = keep reader default on connect.</summary>
+    public byte? RfPower { get; set; }
     public string ApiBaseUrl { get; set; } = "http://localhost:5000";
     public string ApiEventsPath { get; set; } = "/rfid/events";
     public string ApiToken { get; set; } = string.Empty;

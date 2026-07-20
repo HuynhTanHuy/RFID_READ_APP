@@ -26,6 +26,11 @@ public sealed class UhfPrimeSdk : IDisposable
     public string SdkVersion => UhfPrimeNative.SdkVersionLabel;
     public string? LoadError { get; private set; }
 
+    public const byte RfPowerMinDbm = 0;
+    public const byte RfPowerMaxDbm = 33;
+
+    public static bool IsValidRfPowerDbm(byte power) => power is >= RfPowerMinDbm and <= RfPowerMaxDbm;
+
     public bool EnsureLoaded()
     {
         if (IsLoaded)
@@ -104,6 +109,53 @@ public sealed class UhfPrimeSdk : IDisposable
 
             CloseInternal();
             _logger.LogWarning("Reader Disconnected");
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public bool TrySetRfPower(byte power, byte reserved = 0)
+    {
+        EnsureNotDisposed();
+        if (!IsValidRfPowerDbm(power))
+        {
+            return false;
+        }
+
+        _gate.Wait();
+        try
+        {
+            if (_handler == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            var code = UhfPrimeNative.SetRFPower(_handler, power, reserved);
+            return code == UhfPrimeNative.ErrorSuccess;
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public bool TryGetRfPower(out byte power, out byte reserved)
+    {
+        EnsureNotDisposed();
+        power = 0;
+        reserved = 0;
+        _gate.Wait();
+        try
+        {
+            if (_handler == IntPtr.Zero)
+            {
+                return false;
+            }
+
+            var code = UhfPrimeNative.GetRFPower(_handler, out power, out reserved);
+            return code == UhfPrimeNative.ErrorSuccess;
         }
         finally
         {

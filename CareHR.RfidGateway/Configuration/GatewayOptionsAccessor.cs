@@ -32,6 +32,7 @@ public sealed class GatewayOptionsAccessor
     {
         ReaderIp = source.ReaderIp,
         ReaderPort = source.ReaderPort,
+        RfPower = source.RfPower,
         ApiBaseUrl = source.ApiBaseUrl,
         ApiEventsPath = source.ApiEventsPath,
         ApiToken = source.ApiToken,

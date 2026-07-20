@@ -31,12 +31,58 @@ public sealed class RfidReader(UhfPrimeSdk sdk, GatewayOptionsAccessor options, 
             }
 
             sdk.Connect(cfg.ReaderIp, (ushort)cfg.ReaderPort, (uint)Math.Max(1, cfg.ConnectTimeoutMs));
+            TryApplyConfiguredRfPower(cfg);
             var info = sdk.GetDeviceInfo();
             logger.LogInformation(
                 "Reader verified. WorkMode={WorkMode}, Region={Region}, Power={Power}",
                 info.WorkMode,
                 info.Region,
                 info.Power);
+        }
+    }
+
+    private void TryApplyConfiguredRfPower(GatewayOptions cfg)
+    {
+        if (cfg.RfPower is not byte desired)
+        {
+            return;
+        }
+
+        if (!UhfPrimeSdk.IsValidRfPowerDbm(desired))
+        {
+            logger.LogWarning(
+                "Configured RfPower {RfPower} is outside valid range {Min}–{Max} dBm; SetRFPower skipped",
+                desired,
+                UhfPrimeSdk.RfPowerMinDbm,
+                UhfPrimeSdk.RfPowerMaxDbm);
+            return;
+        }
+
+        try
+        {
+            if (!sdk.TrySetRfPower(desired))
+            {
+                logger.LogWarning("SetRFPower failed for configured RfPower {RfPower} dBm", desired);
+                return;
+            }
+
+            if (!sdk.TryGetRfPower(out var actual, out _))
+            {
+                logger.LogWarning("GetRFPower failed after SetRFPower (configured {RfPower} dBm)", desired);
+                return;
+            }
+
+            if (actual != desired)
+            {
+                logger.LogWarning(
+                    "RF Power verify mismatch after SetRFPower. Configured={Configured} dBm, Reader={Actual} dBm",
+                    desired,
+                    actual);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Apply configured RfPower failed");
         }
     }
 

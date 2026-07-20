@@ -1,4 +1,5 @@
 using CareHR.RfidGateway.Configuration;
+using CareHR.RfidGateway.Sdk;
 using CareHR.RfidGateway.Utils;
 
 namespace CareHR.RfidGateway.UI;
@@ -15,6 +16,8 @@ public sealed class SettingsForm : Form
     private readonly TextBox _txtReaderCode = new() { Width = 220 };
     private readonly TextBox _txtHospitalCode = new() { Width = 220 };
     private readonly CheckBox _chkAutoStart = new() { Text = "Auto start with Windows", AutoSize = true };
+    private readonly CheckBox _chkRfPowerApply = new() { Text = "Apply on connect", AutoSize = true };
+    private readonly NumericUpDown _numRfPower = new() { Minimum = 0, Maximum = 33, Width = 80 };
 
     public SettingsForm(AppSettingsStore store, GatewayOptionsAccessor options)
     {
@@ -26,7 +29,7 @@ public sealed class SettingsForm : Form
         MaximizeBox = false;
         MinimizeBox = false;
         StartPosition = FormStartPosition.CenterScreen;
-        ClientSize = new Size(480, 360);
+        ClientSize = new Size(480, 390);
         ShowInTaskbar = true;
         AppBranding.ApplyFormIcon(this);
 
@@ -48,7 +51,7 @@ public sealed class SettingsForm : Form
         {
             Dock = DockStyle.Fill,
             ColumnCount = 2,
-            RowCount = 9,
+            RowCount = 10,
             AutoSize = true
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
@@ -66,7 +69,13 @@ public sealed class SettingsForm : Form
         AddRow(3, "API Token", _txtToken);
         AddRow(4, "Reader Code", _txtReaderCode);
         AddRow(5, "Hospital Code", _txtHospitalCode);
-        layout.Controls.Add(_chkAutoStart, 1, 6);
+
+        var rfPowerRow = new FlowLayoutPanel { AutoSize = true, WrapContents = false };
+        rfPowerRow.Controls.Add(_numRfPower);
+        rfPowerRow.Controls.Add(_chkRfPowerApply);
+        AddRow(6, "RF Power (dBm)", rfPowerRow);
+
+        layout.Controls.Add(_chkAutoStart, 1, 7);
 
         var buttons = new FlowLayoutPanel { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill };
         var btnSave = new Button { Text = "Save", DialogResult = DialogResult.None, AutoSize = true };
@@ -74,7 +83,7 @@ public sealed class SettingsForm : Form
         btnSave.Click += (_, _) => Save();
         buttons.Controls.Add(btnSave);
         buttons.Controls.Add(btnCancel);
-        layout.Controls.Add(buttons, 1, 7);
+        layout.Controls.Add(buttons, 1, 8);
 
         root.Controls.Add(layout, 0, 1);
         Controls.Add(root);
@@ -94,6 +103,10 @@ public sealed class SettingsForm : Form
         _txtReaderCode.Text = cfg.ReaderCode;
         _txtHospitalCode.Text = cfg.HospitalCode;
         _chkAutoStart.Checked = cfg.AutoStartWithWindows || AutoStartHelper.IsEnabled();
+        _chkRfPowerApply.Checked = cfg.RfPower.HasValue;
+        _numRfPower.Value = cfg.RfPower ?? 26;
+        _numRfPower.Enabled = _chkRfPowerApply.Checked;
+        _chkRfPowerApply.CheckedChanged += (_, _) => _numRfPower.Enabled = _chkRfPowerApply.Checked;
     }
 
     private void Save()
@@ -110,11 +123,27 @@ public sealed class SettingsForm : Form
             return;
         }
 
+        if (_chkRfPowerApply.Checked)
+        {
+            var power = (byte)_numRfPower.Value;
+            if (!UhfPrimeSdk.IsValidRfPowerDbm(power))
+            {
+                MessageBox.Show(
+                    this,
+                    $"RF Power must be between {UhfPrimeSdk.RfPowerMinDbm} and {UhfPrimeSdk.RfPowerMaxDbm} dBm.",
+                    "Settings",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+        }
+
         var current = _options.Current;
         var updated = new GatewayOptions
         {
             ReaderIp = _txtIp.Text.Trim(),
             ReaderPort = (int)_numPort.Value,
+            RfPower = _chkRfPowerApply.Checked ? (byte)_numRfPower.Value : null,
             ApiBaseUrl = _txtApiBase.Text.Trim(),
             ApiEventsPath = current.ApiEventsPath,
             ApiToken = _txtToken.Text.Trim(),

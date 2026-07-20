@@ -27,6 +27,12 @@ internal static class UhfPrimeNative
     internal static extern int GetDevicePara(IntPtr handler, out NativeDevicePara devicePara);
 
     [DllImport("UHFPrimeReader.dll")]
+    internal static extern int SetRFPower(IntPtr handler, byte power, byte reserved);
+
+    [DllImport("UHFPrimeReader.dll")]
+    internal static extern int GetRFPower(IntPtr handler, out byte power, out byte reserved);
+
+    [DllImport("UHFPrimeReader.dll")]
     internal static extern int InventoryContinue(IntPtr handler, byte invCount, uint invParam);
 
     [DllImport("UHFPrimeReader.dll")]
